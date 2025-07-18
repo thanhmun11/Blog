@@ -1,0 +1,105 @@
+{
+  "posts": [
+    {
+      "title": "Bài 3",
+      "status": "published",
+      "content": "Đây là nội dung bài viết mẫu 3",
+      "author": "Nguyễn Văn A",
+      "id": "8538"
+    },
+    {
+      "title": "Bài 4",
+      "status": "published",
+      "content": "Hay quá\n",
+      "author": "Trần Thị B",
+      "id": "3032"
+    },
+    {
+      "title": "Bài 2",
+      "status": "draft",
+      "content": "Hihi\n",
+      "author": "xyz",
+      "id": "788c"
+    },
+    {
+      "title": "Bài 1",
+      "slug": "8bf9",
+      "createdAt": "2025-07-15",
+      "status": "draft",
+      "content": "abc",
+      "author": "a",
+      "id": "8bf9"
+    },
+    {
+      "title": "Bài 5",
+      "status": "published",
+      "content": "Tuyệt đó",
+      "author": "ABC",
+      "id": "5ca2"
+    },
+    {
+      "title": "Bài 6",
+      "status": "draft",
+      "content": "Cũng được!",
+      "author": "XYZ",
+      "id": "3eaf"
+    },
+    {
+      "id": "adg5",
+      "title": "Sample Post",
+      "excerpt": "This is a sample post.",
+      "createdAt": "2025-07-15",
+      "slug": "sample-post",
+      "image": "https://via.placeholder.com/400x200"
+    }
+  ],
+  "users": [
+    {
+      "id": "1",
+      "username": "admin",
+      "password": "123456",
+      "role": "admin"
+    },
+    {
+      "id": "2",
+      "username": "viewer",
+      "password": "123456",
+      "role": "viewer"
+    },
+    {
+      "id": "3",
+      "username": "editor",
+      "password": "123456",
+      "role": "editor"
+    },
+    {
+      "id": "4",
+      "username": "manager",
+      "password": "123456",
+      "role": "manager"
+    }
+  ],
+  "comments": [
+    {
+      "id": "b29c",
+      "postId": "8bf9",
+      "author": "admin",
+      "content": "Tuyệt vời!",
+      "createdAt": "2025-07-09T14:42:41.236Z"
+    },
+    {
+      "id": "dec0",
+      "postId": "8bf9",
+      "author": "viewer",
+      "content": "Hay quá :v\n",
+      "createdAt": "2025-07-12T07:49:55.474Z"
+    },
+    {
+      "id": "28df",
+      "postId": "788c",
+      "author": "viewer",
+      "content": "Tuyệt vời quá \n",
+      "createdAt": "2025-07-13T14:07:12.893Z"
+    }
+  ]
+}

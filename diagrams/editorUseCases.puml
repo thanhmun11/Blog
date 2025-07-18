@@ -1,0 +1,23 @@
+@startuml
+actor Editor
+rectangle "Editor Use Cases" {
+  usecase "Create Post"
+  usecase "Edit Own Post"
+  usecase "Delete Own Post"
+  usecase "Request Post Approval"
+  usecase "View Posts"
+  usecase "View Comments"
+  usecase "Add Comment"
+  usecase "Edit Own Comment"
+  usecase "Delete Own Comment"
+}
+Editor --> "Create Post"
+Editor --> "Edit Own Post"
+Editor --> "Delete Own Post"
+Editor --> "Request Post Approval"
+Editor --> "View Posts"
+Editor --> "View Comments"
+Editor --> "Add Comment"
+Editor --> "Edit Own Comment"
+Editor --> "Delete Own Comment"
+@enduml

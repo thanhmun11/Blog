@@ -1,0 +1,15 @@
+@startuml
+actor Viewer
+rectangle "Viewer Use Cases" {
+  usecase "View Posts"
+  usecase "View Comments"
+  usecase "Add Comment"
+  usecase "Edit Own Comment"
+  usecase "Delete Own Comment"
+}
+Viewer --> "View Posts"
+Viewer --> "View Comments"
+Viewer --> "Add Comment"
+Viewer --> "Edit Own Comment"
+Viewer --> "Delete Own Comment"
+@enduml

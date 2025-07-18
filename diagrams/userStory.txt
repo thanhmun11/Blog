@@ -1,0 +1,26 @@
+# User Story: mô tả ngắn gọn, đơn giản 1 tính năng/chức năng từ góc nhìn người dùng cuối, được viết theo ngôn ngữ tự nhiên
+
+User Story 1: Xem và tương tác bài viết
+- Là 1 Viewer, tôi muốn xem danh sách bài viết và chi tiết bài viết để cập nhật thông tin
+- Là 1 Viewer, tôi muốn bình luận vào bài viết để chia sẻ ý kiến
+
+User Story 2: Quản lý bài viết và xuất bản bài viết
+- Là một Editor, tôi muốn tạo bài viết mới để chia sẻ nội dung với người dùng.
+- Là một Editor, tôi muốn chỉnh sửa bài viết để cập nhật hoặc sửa đổi nội dung.
+- Là một Editor, tôi muốn xóa bài viết không còn phù hợp để giữ nội dung sạch sẽ.
+- Là một Editor, tôi muốn xuất bản bài viết để công khai nội dung cho người dùng xem.
+- Là một Editor, tôi muốn lưu bài viết dưới dạng nháp để tiếp tục chỉnh sửa sau.
+- Là một Editor, tôi muốn tối ưu SEO cho bài viết (meta tags, slug, keywords) để tăng thứ hạng tìm kiếm.
+
+User Story 3: Quản lý bình luận
+- Là một Editor hoặc Admin, tôi muốn kiểm duyệt bình luận để đảm bảo nội dung phù hợp.
+- Là một Editor hoặc Admin, tôi muốn xóa bình luận vi phạm chính sách để duy trì chất lượng nội dung.
+
+User Story 4: Quản trị người dùng và phân quyền
+- Là một Admin, tôi muốn thêm, sửa, xóa thông tin người dùng để quản lý truy cập hệ thống.
+- Là một Admin, tôi muốn phân quyền cho người dùng (Admin, Editor, Viewer) để kiểm soát vai trò và quyền hạn.
+- Là một Admin, tôi muốn khóa tài khoản người dùng vi phạm chính sách để đảm bảo an toàn hệ thống
+
+User Story 5: Tối ưu SEO
+- Là một Editor hoặc Admin, tôi muốn thêm meta title, meta description, slug, và keywords vào bài viết để tối ưu hóa cho công cụ tìm kiếm.
+- Là một Admin, tôi muốn xem báo cáo SEO của các bài viết để đánh giá hiệu quả tối ưu hóa.
