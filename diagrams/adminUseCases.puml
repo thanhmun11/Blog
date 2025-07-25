@@ -1,0 +1,25 @@
+@startuml
+actor Admin
+rectangle "Admin Use Cases" {
+  usecase "View Any Post"
+  usecase "Create Post"
+  usecase "Edit Any Post"
+  usecase "Delete Any Post"
+  usecase "Approve Post"
+  usecase "Edit Any Comment"
+  usecase "Delete Any Comment"
+  usecase "Manage Users"
+  usecase "Manage Roles"
+  usecase "SEO Optimization"
+}
+Admin --> "View Any Post"
+Admin --> "Create Post"
+Admin --> "Edit Any Post"
+Admin --> "Delete Any Post"
+Admin --> "Approve Post"
+Admin --> "Edit Any Comment"
+Admin --> "Delete Any Comment"
+Admin --> "Manage Users"
+Admin --> "Manage Roles"
+Admin --> "SEO Optimization"
+@enduml

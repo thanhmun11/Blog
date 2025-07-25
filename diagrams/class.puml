@@ -1,0 +1,52 @@
+@startuml
+class User {
+  -id: String
+  -username: String
+  -email: String
+  -password: String
+  -role: Enum {ADMIN, EDITOR, USER}
+  +login()
+  +logout()
+  +followAuthor()
+}
+
+class Post {
+  -id: String
+  -title: String
+  -content: String
+  -authorId: String
+  -createdAt: Date
+  -updatedAt: Date
+  -seoMeta: SEOMeta
+  +create()
+  +update()
+  +delete()
+}
+
+class Comment {
+  -id: String
+  -postId: String
+  -userId: String
+  -content: String
+  -createdAt: Date
+  -isApproved: Boolean
+  +create()
+  +approve()
+  +delete()
+}
+
+class SEOMeta {
+  -metaTitle: String
+  -metaDescription: String
+  -slug: String
+  -keywords: String[]
+}
+
+User "1" --> "0..*" Post : creates
+User "1" --> "0..*" Comment : writes
+Post "1" --> "0..*" Comment : contains
+Post "1" --> "1" SEOMeta : has
+Admin --> User : manages
+Admin --> Post : manages
+Admin --> Comment : moderates
+@enduml
