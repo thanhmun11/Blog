@@ -46,11 +46,22 @@
     },
     {
       "id": "adg5",
-      "title": "Sample Post",
+      "title": "a",
       "excerpt": "This is a sample post.",
-      "createdAt": "2025-07-15",
+      "createdAt": "2025-07-24",
       "slug": "sample-post",
-      "image": "https://via.placeholder.com/400x200"
+      "image": "https://via.placeholder.com/400x200",
+      "content": "123",
+      "status": "published",
+      "author": "editor"
+    },
+    {
+      "title": "Hành trình xây dựng hệ thống Blog hiện đại với vai trò Editor & Manager",
+      "content": "Trong quá trình phát triển hệ thống blog, chúng tôi đã xây dựng các chức năng hiện đại và thân thiện với người dùng, lấy cảm hứng từ các nền tảng lớn như Medium, WordPress:\n\n- Giao diện Editor với sidebar hiện đại, phân nhóm rõ ràng: Bài viết của tôi, Tất cả bài viết của tôi, Tất cả bài viết.\n- Chức năng tạo bài viết với auto-save nháp, gửi duyệt, lưu vào db.json qua API.\n- Quản lý bài viết: sửa, xóa, gửi duyệt, phân quyền rõ ràng giữa Editor và Manager.\n- Trang Manager Dashboard cho phép duyệt hoặc từ chối bài viết chờ duyệt.\n- Trang chi tiết bài viết hiển thị nội dung, bình luận, cho phép bình luận mới, hiển thị rõ tác giả bình luận.\n- Bình luận có thể xóa/sửa nếu là của mình, hiển thị thời gian gửi, phân trang.\n- Tất cả thao tác CRUD đều đồng bộ với db.json qua json-server.\n\nHệ thống này giúp quản lý nội dung hiệu quả, dễ mở rộng và nâng cấp, phù hợp cho các dự án blog cá nhân hoặc nhóm nhỏ.",
+      "status": "published",
+      "author": "editor",
+      "createdAt": "2025-07-25",
+      "id": "blogai1"
     }
   ],
   "users": [
@@ -100,6 +111,27 @@
       "author": "viewer",
       "content": "Tuyệt vời quá \n",
       "createdAt": "2025-07-13T14:07:12.893Z"
+    },
+    {
+      "id": "3980",
+      "postId": "adg5",
+      "author": "editor",
+      "content": "123",
+      "createdAt": "2025-07-25T00:24:30.480Z"
+    },
+    {
+      "id": "a88d",
+      "postId": "adg5",
+      "author": "editor",
+      "content": "345",
+      "createdAt": "2025-07-25T00:24:39.272Z"
+    },
+    {
+      "id": "dc1f",
+      "postId": "8538",
+      "author": "editor",
+      "content": "ád",
+      "createdAt": "2025-07-25T00:37:12.332Z"
     }
   ]
 }
