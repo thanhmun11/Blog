@@ -10,7 +10,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@heroicons/react": "^2.2.0",
+=======
+>>>>>>> db0fb3b675d7a938a732f073d3ba98569a8501ad
     "axios": "^1.10.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",

@@ -46,6 +46,7 @@
     },
     {
       "id": "adg5",
+<<<<<<< HEAD
       "title": "a",
       "excerpt": "This is a sample post.",
       "createdAt": "2025-07-24",
@@ -62,6 +63,13 @@
       "author": "editor",
       "createdAt": "2025-07-25",
       "id": "blogai1"
+=======
+      "title": "Sample Post",
+      "excerpt": "This is a sample post.",
+      "createdAt": "2025-07-15",
+      "slug": "sample-post",
+      "image": "https://via.placeholder.com/400x200"
+>>>>>>> db0fb3b675d7a938a732f073d3ba98569a8501ad
     }
   ],
   "users": [
@@ -111,6 +119,7 @@
       "author": "viewer",
       "content": "Tuyệt vời quá \n",
       "createdAt": "2025-07-13T14:07:12.893Z"
+<<<<<<< HEAD
     },
     {
       "id": "3980",
@@ -135,3 +144,8 @@
     }
   ]
 }
+=======
+    }
+  ]
+}
+>>>>>>> db0fb3b675d7a938a732f073d3ba98569a8501ad

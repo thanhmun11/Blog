@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
 
 // Mock dữ liệu bài viết và bình luận
@@ -222,3 +223,13 @@ const EditorPosts = () => {
 };
 
 export default EditorPosts;
+=======
+export default function EditorPosts() {
+  return (
+    <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-3xl font-bold text-blue-600 mb-6">Editor Posts</h1>
+      <p>Welcome, Editor! Create and edit posts here.</p>
+    </div>
+  );
+}
+>>>>>>> db0fb3b675d7a938a732f073d3ba98569a8501ad
