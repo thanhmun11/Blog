@@ -1,22 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
-const API_URL = "http://localhost:3000/posts";
-const getCurrentUser = () => "editor"; // Giả lập lấy user hiện tại
+import { getPosts } from "../../services/postService";
+import { getCurrentUser } from "../../services/authService";
 
 const MyPosts = () => {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Lấy bài viết từ db.json (API)
-  const fetchPosts = () => {
-    fetch(`${API_URL}?author=${getCurrentUser()}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts(data);
-        setLoading(false);
-      });
+  // Lấy bài viết từ API backend
+  const fetchPosts = async () => {
+    try {
+      const currentUser = getCurrentUser();
+      const allPosts = await getPosts();
+      // Lọc bài viết của user hiện tại (mọi trạng thái)
+      const myPosts = allPosts.filter(post => 
+        post.author_id === currentUser?.id || post.author_id === currentUser?.userId
+      );
+      setPosts(myPosts);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error fetching posts:', error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -26,18 +32,34 @@ const MyPosts = () => {
 
   // Xóa bài viết (API)
   const handleDelete = async (id) => {
-    await fetch(`${API_URL}/${id}`, { method: "DELETE" });
-    setPosts((prev) => prev.filter((p) => p.id !== id));
+    try {
+      await fetch(`http://localhost:5000/api/posts/${id}`, { 
+        method: "DELETE",
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        }
+      });
+      setPosts((prev) => prev.filter((p) => p.id !== id));
+    } catch (error) {
+      console.error('Error deleting post:', error);
+    }
   };
 
   // Gửi duyệt bài viết nháp (API)
   const handleSubmitForReview = async (post) => {
-    await fetch(`${API_URL}/${post.id}`, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...post, status: "pending" }),
-    });
-    setPosts((prev) => prev.map((p) => p.id === post.id ? { ...p, status: "pending" } : p));
+    try {
+      await fetch(`http://localhost:5000/api/posts/${post.id}`, {
+        method: "PUT",
+        headers: { 
+          "Content-Type": "application/json",
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ ...post, status: "pending" }),
+      });
+      setPosts((prev) => prev.map((p) => p.id === post.id ? { ...p, status: "pending" } : p));
+    } catch (error) {
+      console.error('Error updating post:', error);
+    }
   };
 
   if (loading) return <div>Đang tải...</div>;
@@ -63,10 +85,11 @@ const MyPosts = () => {
             <div className="text-sm text-gray-500">Ngày tạo: {post.createdAt || "-"}</div>
             <div className="flex gap-2 mt-2">
               <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm" onClick={() => navigate(`/editor/edit/${post.id}`)}>Sửa</button>
-              <button className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 text-sm" onClick={() => handleDelete(post.id)}>Xóa</button>
+              <button className="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200 text-sm" onClick={() => handleDelete(post.id)}>Xoá</button>
               {post.status === "draft" && (
                 <button className="px-3 py-1 bg-green-100 text-green-700 rounded hover:bg-green-200 text-sm" onClick={() => handleSubmitForReview(post)}>Gửi duyệt</button>
               )}
+              <button className="px-3 py-1 bg-gray-100 text-gray-700 rounded hover:bg-gray-200 text-sm" onClick={() => navigate(`/editor/my/${post.id}`)}>Xem chi tiết</button>
             </div>
           </div>
         ))}

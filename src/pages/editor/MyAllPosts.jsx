@@ -1,9 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { 
+  DocumentTextIcon,
+  ClockIcon,
+  CheckCircleIcon,
+  EyeIcon,
+  PencilIcon,
+  CalendarIcon,
+  UserIcon
+} from "@heroicons/react/24/outline";
 
-const API_URL = "http://localhost:3000/posts";
-const COMMENTS_URL = "http://localhost:3000/comments";
-const getCurrentUser = () => "editor";
+import { getPosts, getComments, createComment } from "../../services/postService";
+import { getCurrentUser } from "../../services/authService";
 
 const MyAllPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -16,104 +24,241 @@ const MyAllPosts = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${API_URL}?author=${getCurrentUser()}&status=published`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts(data);
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const currentUser = getCurrentUser();
+        console.log('Current user:', currentUser); // Debug
+        
+        const allPosts = await getPosts();
+        console.log('All posts:', allPosts); // Debug
+        
+        // Lọc bài viết của user hiện tại (chỉ bài đã duyệt)
+        const myPosts = allPosts.filter(post =>
+          (post.author_id === currentUser?.id || post.author_id === currentUser?.userId) && post.status === 'published'
+        );
+        console.log('My posts:', myPosts); // Debug
+        
+        setPosts(myPosts);
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetchPosts();
   }, []);
 
-  const handleShowComments = (postId) => {
+  const handleShowComments = async (postId) => {
     setCommentsLoading(true);
     setShowComments(postId);
-    fetch(`${COMMENTS_URL}?postId=${postId}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setComments(data);
-        setCommentsLoading(false);
-      });
+    try {
+      const commentsData = await getComments(postId);
+      setComments(commentsData);
+    } catch (error) {
+      console.error('Error fetching comments:', error);
+    } finally {
+      setCommentsLoading(false);
+    }
   };
 
   const handleAddComment = async (postId) => {
     if (!commentInput.trim()) return;
     setAddingComment(true);
-    await fetch(COMMENTS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        postId,
-        author: getCurrentUser(),
+    try {
+      await createComment({
         content: commentInput,
-        createdAt: new Date().toISOString(),
-      }),
-    });
-    setCommentInput("");
-    handleShowComments(postId); // reload comments
-    setAddingComment(false);
+        post_id: parseInt(postId)
+      });
+      setCommentInput("");
+      handleShowComments(postId); // reload comments
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    } finally {
+      setAddingComment(false);
+    }
   };
 
-  if (loading) return <div>Đang tải...</div>;
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "draft": return "bg-gray-100 text-gray-700 border-gray-300";
+      case "pending": return "bg-yellow-100 text-yellow-700 border-yellow-300";
+      case "published": return "bg-green-100 text-green-700 border-green-300";
+      default: return "bg-gray-100 text-gray-700 border-gray-300";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "draft": return <DocumentTextIcon className="w-4 h-4" />;
+      case "pending": return <ClockIcon className="w-4 h-4" />;
+      case "published": return <CheckCircleIcon className="w-4 h-4" />;
+      default: return <DocumentTextIcon className="w-4 h-4" />;
+    }
+  };
+
+  const getStatusText = (status) => {
+    switch (status) {
+      case "draft": return "Nháp";
+      case "pending": return "Chờ duyệt";
+      case "published": return "Đã xuất bản";
+      default: return status;
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('vi-VN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-gray-600 text-lg">Đang tải bài viết...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      <h2 className="text-2xl font-bold mb-4">Tất cả bài viết của tôi (đã duyệt)</h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {posts.map((post) => (
-          <div
-            key={post.id}
-            className="bg-white rounded shadow p-5 flex flex-col gap-2 border hover:shadow-lg transition cursor-pointer"
-            onClick={() => navigate(`/editor/myall/${post.id}`)}
-          >
-            <div className="flex items-center justify-between">
-              <h3 className="font-semibold text-lg truncate">{post.title}</h3>
-              <span className="px-2 py-1 rounded text-xs font-medium ml-2 bg-green-100 text-green-700">Đã duyệt</span>
-            </div>
-            <div className="text-sm text-gray-500">Ngày tạo: {post.createdAt || "-"}</div>
-            <div className="text-gray-700 mb-2">{post.content}</div>
-            <div className="flex gap-2 mt-2">
-              <button className="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm" onClick={() => handleShowComments(post.id)}>
-                Xem bình luận
-              </button>
-            </div>
-            {showComments === post.id && (
-              <div className="mt-2 bg-gray-50 p-2 rounded border">
-                <h4 className="font-semibold mb-1 text-sm">Bình luận</h4>
-                {commentsLoading ? (
-                  <div>Đang tải bình luận...</div>
-                ) : comments.length === 0 ? (
-                  <div className="text-gray-400 text-sm">Chưa có bình luận nào.</div>
-                ) : (
-                  <ul className="space-y-1 mb-2">
-                    {comments.map((c) => (
-                      <li key={c.id} className="text-sm border-b last:border-b-0 pb-1">
-                        <span className="font-medium">{c.author}:</span> {c.content}
-                      </li>
-                    ))}
-                  </ul>
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+      <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="mb-8 animate-fade-in">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-2">
+            Tất cả bài viết của tôi
+          </h1>
+          <p className="text-gray-600 text-lg">Xem tất cả bài viết của bạn ở mọi trạng thái</p>
+        </div>
+
+        {/* Posts Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 animate-fade-in">
+          {posts.map((post, index) => (
+            <div
+              key={post.id}
+              className="bg-white rounded-2xl shadow-lg border border-gray-100 hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden"
+              style={{ animationDelay: `${index * 0.1}s` }}
+            >
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-bold text-xl text-gray-900 line-clamp-2 hover:text-blue-600 transition-colors cursor-pointer">
+                    {post.title}
+                  </h3>
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium border ${getStatusColor(post.status)}`}>
+                    {getStatusIcon(post.status)}
+                    {getStatusText(post.status)}
+                  </span>
+                </div>
+                
+                <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
+                  <div className="flex items-center gap-1">
+                    <CalendarIcon className="w-4 h-4" />
+                    {formatDate(post.created_at)}
+                  </div>
+                </div>
+                
+                {post.excerpt && (
+                  <p className="text-gray-700 line-clamp-3 mb-4">{post.excerpt}</p>
                 )}
-                <div className="flex gap-2 mt-2">
-                  <input
-                    className="border p-1 flex-1"
-                    type="text"
-                    placeholder="Viết bình luận..."
-                    value={commentInput}
-                    onChange={e => setCommentInput(e.target.value)}
-                    onKeyDown={e => { if (e.key === "Enter") handleAddComment(post.id); }}
-                  />
-                  <button
-                    className="bg-blue-400 text-white px-2 rounded"
-                    onClick={() => handleAddComment(post.id)}
-                    disabled={addingComment}
-                  >
-                    {addingComment ? "Đang gửi..." : "Gửi"}
-                  </button>
+                
+                <p className="text-gray-700 line-clamp-4 mb-4">{post.content}</p>
+                
+                <div className="flex items-center justify-between">
+                  <div className="flex gap-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate(`/editor/myall/${post.id}`);
+                      }}
+                      className="inline-flex items-center gap-1 px-3 py-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                    >
+                      <EyeIcon className="w-4 h-4" />
+                      Xem chi tiết
+                    </button>
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
-        ))}
-        {posts.length === 0 && <div className="col-span-2 text-center text-gray-400">Chưa có bài viết nào đã duyệt.</div>}
+              
+              {/* Comments Section */}
+              {showComments === post.id && (
+                <div className="border-t border-gray-100 bg-gray-50 p-6">
+                  <h4 className="font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <PencilIcon className="w-5 h-5" />
+                    Bình luận ({comments.length})
+                  </h4>
+                  
+                  {commentsLoading ? (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto"></div>
+                      <p className="text-gray-600 text-sm mt-2">Đang tải bình luận...</p>
+                    </div>
+                  ) : comments.length === 0 ? (
+                    <div className="text-center py-4 text-gray-500">
+                      <PencilIcon className="w-8 h-8 mx-auto mb-2 text-gray-300" />
+                      <p className="text-sm">Chưa có bình luận nào.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3 mb-4">
+                      {comments.map((comment) => (
+                        <div key={comment.id} className="bg-white rounded-lg p-3 shadow-sm">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <span className="font-medium text-sm text-gray-900">{comment.author_name || "Người dùng"}</span>
+                                <span className="text-xs text-gray-500">{formatDate(comment.created_at)}</span>
+                              </div>
+                              <p className="text-gray-700 text-sm">{comment.content}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  
+                  <div className="flex gap-2">
+                    <input
+                      className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      type="text"
+                      placeholder="Viết bình luận..."
+                      value={commentInput}
+                      onChange={e => setCommentInput(e.target.value)}
+                      onKeyDown={e => { if (e.key === "Enter") handleAddComment(post.id); }}
+                    />
+                    <button
+                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                      onClick={() => handleAddComment(post.id)}
+                      disabled={addingComment}
+                    >
+                      {addingComment ? "Đang gửi..." : "Gửi"}
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+          
+          {posts.length === 0 && (
+            <div className="col-span-full text-center py-12 animate-fade-in">
+              <DocumentTextIcon className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Chưa có bài viết nào</h3>
+              <p className="text-gray-500 mb-6">Bắt đầu tạo bài viết đầu tiên của bạn!</p>
+              <button
+                onClick={() => navigate('/editor/create')}
+                className="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200"
+              >
+                <DocumentTextIcon className="w-5 h-5" />
+                Tạo bài viết đầu tiên
+              </button>
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );

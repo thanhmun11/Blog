@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const API_URL = "http://localhost:3000/posts";
+import { getPosts } from "../../services/postService";
 
 const AllPosts = () => {
   const [posts, setPosts] = useState([]);
@@ -9,12 +9,19 @@ const AllPosts = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${API_URL}?status=published`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPosts(data);
+    const fetchPosts = async () => {
+      try {
+        const allPosts = await getPosts();
+        // Lọc bài viết đã publish
+        const publishedPosts = allPosts.filter(post => post.status === 'published');
+        setPosts(publishedPosts);
         setLoading(false);
-      });
+      } catch (error) {
+        console.error('Error fetching posts:', error);
+        setLoading(false);
+      }
+    };
+    fetchPosts();
   }, []);
 
   if (loading) return <div>Đang tải...</div>;

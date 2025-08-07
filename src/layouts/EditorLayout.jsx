@@ -1,6 +1,7 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { PencilSquareIcon, DocumentTextIcon, BookOpenIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, DocumentTextIcon, BookOpenIcon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import React from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 const menu = [
   {
@@ -23,26 +24,31 @@ const menu = [
   },
 ];
 
-const getCurrentUser = () => ({ username: "editor", role: "Editor" }); // Giả lập user
-
 const EditorLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const user = getCurrentUser();
+  const { user, logout } = useAuth();
 
   const handleNav = (to) => {
     navigate(to);
   };
 
   const handleLogout = () => {
+    logout();
     navigate("/login");
   };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
       {/* Sidebar sát trái, màu khác */}
-      <aside className="w-64 bg-gray-100 p-4 border-r flex flex-col min-h-screen shadow-md fixed left-0 top-0 bottom-0 z-20">
-        <div className="text-2xl font-bold mb-8 text-blue-600 text-center tracking-wide">Editor Panel</div>
+      <aside className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 p-4 border-r flex flex-col min-h-screen shadow-xl fixed left-0 top-0 bottom-0 z-20">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="text-2xl font-bold mb-2 text-white text-center tracking-wide">Editor Panel</div>
+          <div className="text-sm text-gray-300 text-center">Xin chào, {user?.username || 'Editor'}</div>
+        </div>
+        
+        {/* Navigation */}
         <nav className="flex flex-col gap-2 flex-1">
           {menu.map((item) => {
             const isActive = item.match.some((m) =>
@@ -52,7 +58,11 @@ const EditorLayout = () => {
               <button
                 key={item.to}
                 onClick={() => handleNav(item.to)}
-                className={`flex items-center w-full text-left px-4 py-2 rounded transition-colors font-medium hover:bg-blue-50 hover:text-blue-600 ${isActive ? "bg-blue-600 text-white" : "text-gray-700"}`}
+                className={`flex items-center w-full text-left px-4 py-3 rounded-lg transition-all duration-200 font-medium ${
+                  isActive 
+                    ? "bg-blue-600 text-white shadow-lg transform scale-105" 
+                    : "text-gray-300 hover:bg-gray-700 hover:text-white"
+                }`}
               >
                 {item.icon}
                 {item.label}
@@ -60,7 +70,19 @@ const EditorLayout = () => {
             );
           })}
         </nav>
-        <div className="mt-auto text-center text-xs text-gray-400 pt-4 border-t">© 2025 My Blog</div>
+        
+        {/* Logout Button */}
+        <div className="mt-auto pt-4 border-t border-gray-700">
+          <button
+            onClick={handleLogout}
+            className="flex items-center w-full px-4 py-3 text-red-400 hover:bg-red-900 hover:text-white rounded-lg transition-all duration-200 font-medium group"
+          >
+            <ArrowRightOnRectangleIcon className="w-5 h-5 mr-2 group-hover:rotate-12 transition-transform" />
+            Đăng xuất
+          </button>
+        </div>
+        
+        <div className="text-center text-xs text-gray-500 pt-4">© 2025 My Blog</div>
       </aside>
       {/* Main content + header */}
       <div className="flex-1 ml-64 min-h-screen flex flex-col">
