@@ -8,6 +8,7 @@ import ManagerDashboard from "../pages/manager/ManagerDashboard";
 import MyAllPosts from "../pages/editor/MyAllPosts";
 import MyPostDetail from "../pages/editor/MyPostDetail";
 import AllPostDetail from "../pages/editor/AllPostDetail";
+import EditorDashboard from "../pages/editor/EditorDashboard";
 
 export const privateRoutes = [
   {
@@ -23,6 +24,7 @@ export const privateRoutes = [
         element: <EditorLayout />,
         allowedRoles: ["editor"],
         children: [
+          { path: "dashboard", element: <EditorDashboard />, allowedRoles: ["editor"] },
           { path: "myposts", element: <MyPosts />, allowedRoles: ["editor"] },
           { path: "posts", element: <MyPosts />, allowedRoles: ["editor"] },
           { path: "create", element: <CreatePost />, allowedRoles: ["editor"] },

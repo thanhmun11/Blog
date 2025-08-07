@@ -1,25 +1,31 @@
 import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
-import { PencilSquareIcon, DocumentTextIcon, BookOpenIcon, ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
+import { PencilSquareIcon, DocumentTextIcon, BookOpenIcon, ArrowRightOnRectangleIcon, UsersIcon, PlusCircleIcon } from "@heroicons/react/24/outline";
 import React from "react";
 import { useAuth } from "../contexts/AuthContext";
 
 const menu = [
   {
+    to: "/editor/dashboard",
+    label: "Dashboard",
+    icon: <BookOpenIcon className="w-5 h-5 mr-2" />,
+    match: ["/editor/dashboard"],
+  },
+  {
+    to: "/editor/create",
+    label: "Thêm bài viết mới",
+    icon: <PlusCircleIcon className="w-5 h-5 mr-2" />,
+    match: ["/editor/create"],
+  },
+  {
     to: "/editor/myposts",
     label: "Bài viết của tôi",
-    icon: <PencilSquareIcon className="w-5 h-5 mr-2" />,
+    icon: <DocumentTextIcon className="w-5 h-5 mr-2" />,
     match: ["/editor/myposts", "/editor/posts"],
   },
   {
-    to: "/editor/myall",
-    label: "Tất cả bài viết của tôi",
-    icon: <DocumentTextIcon className="w-5 h-5 mr-2" />,
-    match: ["/editor/myall"],
-  },
-  {
     to: "/editor/all",
-    label: "Tất cả bài viết",
-    icon: <BookOpenIcon className="w-5 h-5 mr-2" />,
+    label: "Bài viết cộng đồng",
+    icon: <UsersIcon className="w-5 h-5 mr-2" />,
     match: ["/editor/all"],
   },
 ];
@@ -39,7 +45,7 @@ const EditorLayout = () => {
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
+  <div className="flex min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-purple-50 p-0">
       {/* Sidebar sát trái, màu khác */}
       <aside className="w-64 bg-gradient-to-b from-gray-900 to-gray-800 p-4 border-r flex flex-col min-h-screen shadow-xl fixed left-0 top-0 bottom-0 z-20">
         {/* Header */}
@@ -50,7 +56,7 @@ const EditorLayout = () => {
         
         {/* Navigation */}
         <nav className="flex flex-col gap-2 flex-1">
-          {menu.map((item) => {
+              {menu.map((item) => { 
             const isActive = item.match.some((m) =>
               m === location.pathname || (m.endsWith("edit") && location.pathname.startsWith(m))
             );
@@ -85,9 +91,9 @@ const EditorLayout = () => {
         <div className="text-center text-xs text-gray-500 pt-4">© 2025 My Blog</div>
       </aside>
       {/* Main content + header */}
-      <div className="flex-1 ml-64 min-h-screen flex flex-col">
+  <div className="flex-1 min-h-screen flex flex-col">
         {/* Main content */}
-        <main className="flex-1 p-8 bg-gray-50">
+  <main className="flex-1 w-full p-0">
           <Outlet />
         </main>
       </div>

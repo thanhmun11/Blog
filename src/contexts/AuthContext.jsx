@@ -1,7 +1,8 @@
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useState, useEffect } from "react";
 import { loginUser, registerUser, setAuthToken, getCurrentUser, logoutUser } from "../services/authService";
+import { Link } from 'react-router-dom';
 
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
@@ -74,3 +75,21 @@ export const AuthProvider = ({ children }) => {
 
 // Hook để sử dụng trong component
 export const useAuth = () => useContext(AuthContext);
+
+function EditorLayout({ children }) {
+  return (
+    <div className="flex">
+      <aside className="w-64 bg-gray-100 min-h-screen p-4">
+        <nav className="flex flex-col gap-4">
+          <Link to="/editor/dashboard" className="font-semibold hover:text-blue-600">
+            Dashboard
+          </Link>
+          {/* Các mục sidebar khác */}
+        </nav>
+      </aside>
+      <main className="flex-1">{children}</main>
+    </div>
+  );
+}
+
+export default EditorLayout;

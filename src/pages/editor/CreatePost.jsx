@@ -75,11 +75,13 @@ const CreatePost = () => {
   }
 
   return (
-    <PostForm
-      onSave={handleSave}
-      onCancel={handleCancel}
-      initialData={initialData}
-    />
+  <div className="w-full p-0">
+      <PostForm
+        onSave={handleSave}
+        onCancel={handleCancel}
+        initialData={initialData}
+      />
+    </div>
   );
 };
 

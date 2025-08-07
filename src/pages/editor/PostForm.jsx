@@ -117,7 +117,7 @@ const PostForm = ({ onSave, onCancel, initialData = null }) => {
   console.log('DEBUG canEdit:', canEdit);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+  <div className="min-h-screen w-full bg-gradient-to-br from-blue-50 via-white to-purple-50 p-0">
       <div className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-8">

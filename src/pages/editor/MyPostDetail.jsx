@@ -57,7 +57,7 @@ const MyPostDetail = () => {
   if (!post) return <div>Không tìm thấy bài viết.</div>;
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
+    <div className="w-full p-0">
       <h2 className="text-2xl font-bold mb-2">{post.title}</h2>
       <div className="text-gray-500 mb-2">Ngày tạo: {post.createdAt || "-"}</div>
       <div className="mb-6 text-gray-800 whitespace-pre-line">{post.content}</div>
