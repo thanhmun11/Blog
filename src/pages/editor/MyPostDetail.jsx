@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-const API_URL = "http://localhost:3000/posts";
-const COMMENTS_URL = "http://localhost:3000/comments";
-const getCurrentUser = () => "editor";
+import { getPostById, getComments, createComment } from "../../services/postService";
+import { getCurrentUser } from "../../services/authService";
 
 const MyPostDetail = () => {
   const { id } = useParams();
@@ -15,49 +13,51 @@ const MyPostDetail = () => {
   const [addingComment, setAddingComment] = useState(false);
 
   useEffect(() => {
-    fetch(`${API_URL}/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setPost(data);
+    const fetchData = async () => {
+      try {
+        const [postData, commentsData] = await Promise.all([
+          getPostById(id),
+          getComments(id)
+        ]);
+        setPost(postData);
+        setComments(commentsData);
         setLoading(false);
-      });
-    fetch(`${COMMENTS_URL}?postId=${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setComments(data);
         setCommentsLoading(false);
-      });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        setLoading(false);
+        setCommentsLoading(false);
+      }
+    };
+    fetchData();
   }, [id]);
 
   const handleAddComment = async () => {
     if (!commentInput.trim()) return;
     setAddingComment(true);
-    await fetch(COMMENTS_URL, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        postId: id,
-        author: getCurrentUser(),
+    try {
+      const currentUser = getCurrentUser();
+      await createComment({
         content: commentInput,
-        createdAt: new Date().toISOString(),
-      }),
-    });
-    setCommentInput("");
-    // Reload comments
-    fetch(`${COMMENTS_URL}?postId=${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        setComments(data);
-        setCommentsLoading(false);
-        setAddingComment(false);
+        post_id: parseInt(id),
+        author_id: currentUser?.userId || 1
       });
+      setCommentInput("");
+      // Reload comments
+      const updatedComments = await getComments(id);
+      setComments(updatedComments);
+    } catch (error) {
+      console.error('Error adding comment:', error);
+    } finally {
+      setAddingComment(false);
+    }
   };
 
   if (loading) return <div>Đang tải...</div>;
   if (!post) return <div>Không tìm thấy bài viết.</div>;
 
   return (
-    <div className="max-w-2xl mx-auto py-8">
+    <div className="w-full p-0">
       <h2 className="text-2xl font-bold mb-2">{post.title}</h2>
       <div className="text-gray-500 mb-2">Ngày tạo: {post.createdAt || "-"}</div>
       <div className="mb-6 text-gray-800 whitespace-pre-line">{post.content}</div>

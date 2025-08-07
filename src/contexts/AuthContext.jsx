@@ -1,16 +1,28 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import { createContext, useContext, useState, useEffect } from "react";
+import { loginUser, registerUser, setAuthToken, getCurrentUser, logoutUser } from "../services/authService";
+import { Link } from 'react-router-dom';
 
-// API gốc
-const API_URL = "http://localhost:3000";
-
-const AuthContext = createContext();
+export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const saved = localStorage.getItem("user");
-    return saved ? JSON.parse(saved) : null;
+    return getCurrentUser();
   });
+
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Check if user is logged in on app start
+    const token = localStorage.getItem('token');
+    if (token) {
+      setAuthToken(token);
+      const currentUser = getCurrentUser();
+      if (currentUser) {
+        setUser(currentUser);
+      }
+    }
+    setLoading(false);
+  }, []);
 
   // Đăng nhập
   const login = async ({ username, password }) => {
@@ -18,45 +30,41 @@ export const AuthProvider = ({ children }) => {
       throw new Error("Vui lòng nhập đầy đủ thông tin");
     }
 
-    const res = await axios.get(`${API_URL}/users`, {
-      params: { username, password },
-    });
-
-    const data = res.data;
-
-    if (data.length === 0) throw new Error("Sai thông tin đăng nhập");
-
-    const loggedUser = data[0];
-    setUser(loggedUser);
-    localStorage.setItem("user", JSON.stringify(loggedUser));
-    return loggedUser;
+    try {
+      const response = await loginUser({ username, password });
+      const { token, user: userData } = response;
+      
+      setAuthToken(token);
+      setUser(userData);
+      return userData;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Đăng nhập thất bại");
+    }
   };
 
   // Đăng xuất
   const logout = () => {
+    logoutUser();
     setUser(null);
-    localStorage.removeItem("user");
   };
 
   // Đăng ký
-  const register = async ({ username, password }) => {
-    if (!username || !password) {
+  const register = async ({ username, password, email, role = "viewer" }) => {
+    if (!username || !password || !email) {
       throw new Error("Vui lòng nhập đầy đủ thông tin");
     }
 
-    // Kiểm tra tên người dùng đã tồn tại
-    const res = await axios.get(`${API_URL}/users`, {
-      params: { username },
-    });
-
-    if (res.data.length > 0) {
-      throw new Error("Tên đăng nhập đã tồn tại");
+    try {
+      const response = await registerUser({ username, password, email, role });
+      return response;
+    } catch (error) {
+      throw new Error(error.response?.data?.message || "Đăng ký thất bại");
     }
-
-    const newUser = { username, password, role: "viewer" };
-
-    await axios.post(`${API_URL}/users`, newUser);
   };
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <AuthContext.Provider value={{ user, login, logout, register }}>
@@ -67,3 +75,21 @@ export const AuthProvider = ({ children }) => {
 
 // Hook để sử dụng trong component
 export const useAuth = () => useContext(AuthContext);
+
+function EditorLayout({ children }) {
+  return (
+    <div className="flex">
+      <aside className="w-64 bg-gray-100 min-h-screen p-4">
+        <nav className="flex flex-col gap-4">
+          <Link to="/editor/dashboard" className="font-semibold hover:text-blue-600">
+            Dashboard
+          </Link>
+          {/* Các mục sidebar khác */}
+        </nav>
+      </aside>
+      <main className="flex-1">{children}</main>
+    </div>
+  );
+}
+
+export default EditorLayout;
